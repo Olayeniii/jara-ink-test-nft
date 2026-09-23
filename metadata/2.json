@@ -1,0 +1,10 @@
+{
+  "name": "Jara Ink Test #2 - Operator",
+  "description": "Jara's bounded Ink preflight test NFT. Public mint, zero mint price, max one per call and one per wallet.",
+  "image": "https://raw.githubusercontent.com/Olayeniii/jara-ink-test-nft/main/art/2-jara-operator.jpg",
+  "attributes": [
+    {"trait_type": "Role", "value": "Operator"},
+    {"trait_type": "Network", "value": "Ink"},
+    {"trait_type": "Purpose", "value": "Jara Preflight Test"}
+  ]
+}
