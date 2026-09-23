@@ -10,20 +10,32 @@ contract JaraInkTestNFT is ERC721 {
 
     uint256 public totalSupply;
     mapping(address => bool) public hasMinted;
+    mapping(address => bool) public approvedMinter;
 
     error InvalidQuantity();
     error SoldOut();
     error AlreadyMinted();
     error WrongValue();
+    error NotApproved();
+    error InvalidApprovedWallet();
+    error DuplicateApprovedWallet();
     error NonexistentToken();
 
-    constructor() ERC721("Jara Ink Test NFT", "JITN") {}
+    constructor(address[3] memory approvedWallets) ERC721("Jara Ink Test NFT", "JITN") {
+        for (uint256 i = 0; i < approvedWallets.length; ++i) {
+            address wallet = approvedWallets[i];
+            if (wallet == address(0)) revert InvalidApprovedWallet();
+            if (approvedMinter[wallet]) revert DuplicateApprovedWallet();
+            approvedMinter[wallet] = true;
+        }
+    }
 
     function mint(uint256 quantity) external payable {
         if (quantity == 0 || quantity > MAX_PER_CALL) revert InvalidQuantity();
-        if (hasMinted[msg.sender]) revert AlreadyMinted();
-        if (totalSupply + quantity > MAX_SUPPLY) revert SoldOut();
         if (msg.value != MINT_PRICE * quantity) revert WrongValue();
+        if (!approvedMinter[msg.sender]) revert NotApproved();
+        if (totalSupply + quantity > MAX_SUPPLY) revert SoldOut();
+        if (hasMinted[msg.sender]) revert AlreadyMinted();
 
         hasMinted[msg.sender] = true;
         uint256 tokenId = ++totalSupply;
